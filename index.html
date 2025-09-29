@@ -45,9 +45,8 @@
 
     // Simulasi ambil data dari Google Sheets
     async function fetchData() {
+      try {
       const response = await axios.get("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
-// dan
-axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
       pembeliData = response.data.pembeli;
       produkData = response.data.produk;
 
@@ -114,6 +113,10 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
 
     function simpanTransaksi() {
       const kodePembeli = document.getElementById("kodePembeli").value;
+      if (!kodePembeli || keranjang.length === 0) {
+        alert("Pilih pembeli dan tambahkan minimal 1 produk!);
+              return;
+      }
       const tanggal = new Date().toISOString().split("T")[0];
 
       const payload = {
@@ -125,10 +128,13 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
       };
 
       axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
-// dan
-axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec, payload");
         .then(() => alert("Transaksi disimpan!"))
-        .catch(err => alert("Gagal menyimpan"));
+resetForm();
+    })
+          .catch(err => {
+            console.error("Gagal simpan:", err);
+            alert("Gagal menyimpan transaksi.");
+    });
     }
 
     function cetakNota() {
@@ -143,4 +149,5 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
   </script>
 </body>
 </html>
+
 
