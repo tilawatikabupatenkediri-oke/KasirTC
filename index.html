@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aplikasi Kasir Web</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body { font-family: Montserrat; padding: 20px; }
+    table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Kasir Penjualan</h2>
+
+  <label for="kodePembeli">Pilih Pembeli:</label>
+  <select id="kodePembeli" onchange="updateLevelPembeli()">
+    <option value="">--Pilih--</option>
+  </select>
+  <p>Level: <span id="levelPembeli"></span></p>
+
+  <label for="kodeProduk">Pilih Produk:</label>
+  <select id="kodeProduk" onchange="updateHargaProduk()">
+    <option value="">--Pilih--</option>
+  </select>
+  <p>Harga: <span id="hargaProduk"></span></p>
+
+  <label>Jumlah: <input type="number" id="qty" value="1" /></label>
+  <button onclick="tambahKeKeranjang()">Tambah ke Keranjang</button>
+
+  <h3>Keranjang Belanja</h3>
+  <table id="keranjangTable">
+    <tr>
+      <th>Produk</th><th>Harga</th><th>Qty</th><th>Total</th>
+    </tr>
+  </table>
+  <p>Total Belanja: <span id="totalBelanja">0</span></p>
+
+  <button onclick="simpanTransaksi()">Simpan</button>
+  <button onclick="cetakNota()">Cetak Nota</button>
+  <button onclick="resetForm()">Reset</button>
+
+  <script>
+    let pembeliData = {};
+    let produkData = {};
+    let keranjang = [];
+
+    // Simulasi ambil data dari Google Sheets
+    async function fetchData() {
+      const response = await axios.get("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
+// dan
+axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
+      pembeliData = response.data.pembeli;
+      produkData = response.data.produk;
+
+      // Populate dropdowns
+      for (let kode in pembeliData) {
+        const opt = document.createElement("option");
+        opt.value = kode;
+        opt.textContent = pembeliData[kode].nama;
+        document.getElementById("kodePembeli").appendChild(opt);
+      }
+
+      for (let kode in produkData) {
+        const opt = document.createElement("option");
+        opt.value = kode;
+        opt.textContent = produkData[kode].nama;
+        document.getElementById("kodeProduk").appendChild(opt);
+      }
+    }
+
+    function updateLevelPembeli() {
+      const kode = document.getElementById("kodePembeli").value;
+      if (kode) {
+        document.getElementById("levelPembeli").textContent = pembeliData[kode].level;
+        updateHargaProduk();
+      }
+    }
+
+    function updateHargaProduk() {
+      const kodeProduk = document.getElementById("kodeProduk").value;
+      const kodePembeli = document.getElementById("kodePembeli").value;
+      const level = pembeliData[kodePembeli]?.level;
+      if (kodeProduk && level) {
+        const harga = produkData[kodeProduk][`harga_${level.toLowerCase()}`];
+        document.getElementById("hargaProduk").textContent = harga;
+      }
+    }
+
+    function tambahKeKeranjang() {
+      const kodeProduk = document.getElementById("kodeProduk").value;
+      const qty = parseInt(document.getElementById("qty").value);
+      const kodePembeli = document.getElementById("kodePembeli").value;
+      const level = pembeliData[kodePembeli]?.level;
+      const harga = produkData[kodeProduk][`harga_${level.toLowerCase()}`];
+      const namaProduk = produkData[kodeProduk].nama;
+
+      const total = harga * qty;
+      keranjang.push({ kodeProduk, namaProduk, harga, qty, total });
+
+      const row = `<tr>
+        <td>${namaProduk}</td>
+        <td>${harga}</td>
+        <td>${qty}</td>
+        <td>${total}</td>
+      </tr>`;
+      document.getElementById("keranjangTable").insertAdjacentHTML("beforeend", row);
+
+      updateTotalBelanja();
+    }
+
+    function updateTotalBelanja() {
+      const total = keranjang.reduce((sum, item) => sum + item.total, 0);
+      document.getElementById("totalBelanja").textContent = total;
+    }
+
+    function simpanTransaksi() {
+      const kodePembeli = document.getElementById("kodePembeli").value;
+      const tanggal = new Date().toISOString().split("T")[0];
+
+      const payload = {
+        tanggal,
+        kodePembeli,
+        pembeli: pembeliData[kodePembeli].nama,
+        level: pembeliData[kodePembeli].level,
+        keranjang
+      };
+
+      axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
+// dan
+axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec, payload)
+        .then(() => alert("Transaksi disimpan!"))
+        .catch(err => alert("Gagal menyimpan"));
+    }
+
+    function cetakNota() {
+      window.print();
+    }
+
+    function resetForm() {
+      location.reload();
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
