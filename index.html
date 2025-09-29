@@ -78,7 +78,8 @@
       if (kodeProduk && level) {
         const harga = produkData[kodeProduk][`harga_${level.toLowerCase()}`];
         document.getElementById("hargaProduk").textContent = harga;
-      }
+        } else {document.getElementById("hargaProduk").textContent = "";
+               }
     }
 
     function tambahKeKeranjang() {
@@ -136,6 +137,7 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
   </script>
 </body>
 </html>
+
 
 
 
