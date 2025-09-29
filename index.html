@@ -4,7 +4,7 @@
   <title>Aplikasi Kasir Web</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
-    body { font-family: Arial; padding: 20px; }
+    body { font-family: Montserrat; padding: 20px; }
     table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 5px; }
   </style>
 </head>
@@ -45,7 +45,6 @@
 
     // Simulasi ambil data dari Google Sheets
     async function fetchData() {
-      try {
       const response = await axios.get("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
       pembeliData = response.data.pembeli;
       produkData = response.data.produk;
@@ -78,7 +77,7 @@
       const kodeProduk = document.getElementById("kodeProduk").value;
       const kodePembeli = document.getElementById("kodePembeli").value;
       const level = pembeliData[kodePembeli]?.level;
-      if (kodeProduk & level) {
+      if (kodeProduk && level) {
         const harga = produkData[kodeProduk][`harga_${level.toLowerCase()}`];
         document.getElementById("hargaProduk").textContent = harga;
       }
@@ -113,10 +112,6 @@
 
     function simpanTransaksi() {
       const kodePembeli = document.getElementById("kodePembeli").value;
-      if (!kodePembeli || keranjang.length === 0) {
-        alert("Pilih pembeli dan tambahkan minimal 1 produk!);
-              return;
-      }
       const tanggal = new Date().toISOString().split("T")[0];
 
       const payload = {
@@ -126,15 +121,9 @@
         level: pembeliData[kodePembeli].level,
         keranjang
       };
-
-      axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
+axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec", payload)
         .then(() => alert("Transaksi disimpan!"))
-resetForm();
-    })
-          .catch(err => {
-            console.error("Gagal simpan:", err);
-            alert("Gagal menyimpan transaksi.");
-    });
+        .catch(err => alert("Gagal menyimpan"));
     }
 
     function cetakNota() {
