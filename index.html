@@ -79,7 +79,7 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
       const kodeProduk = document.getElementById("kodeProduk").value;
       const kodePembeli = document.getElementById("kodePembeli").value;
       const level = pembeliData[kodePembeli]?.level;
-      if (kodeProduk && level) {
+      if (kodeProduk & level) {
         const harga = produkData[kodeProduk][`harga_${level.toLowerCase()}`];
         document.getElementById("hargaProduk").textContent = harga;
       }
@@ -126,7 +126,7 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
 
       axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec");
 // dan
-axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec, payload)
+axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIAJcR9vbFAzV9YKtr7FJ3uPGg8KcCJQyMW5o47fen/exec, payload");
         .then(() => alert("Transaksi disimpan!"))
         .catch(err => alert("Gagal menyimpan"));
     }
@@ -143,3 +143,4 @@ axios.post("https://script.google.com/macros/s/AKfycbwUySqClbKNltWKznFRjATIenlIA
   </script>
 </body>
 </html>
+
